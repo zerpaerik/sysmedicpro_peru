@@ -19,9 +19,9 @@ class ServiciosController extends Controller
       return view('generics.index', [
         "icon" => "fa-list-alt",
         "model" => "servicios",
-        "headers" => ["id", "Detalle", "Precio","Porcentaje", "Porcentaje Personal", "Porcentaje Tecnólogo", "Opciones"],
+        "headers" => ["id", "Detalle", "Precio","Porcentaje", "Porcentaje Personal", "Opciones"],
         "data" => $servicios,
-        "fields" => ["id", "detalle", "precio","porcentaje","por_per", "por_tec"],
+        "fields" => ["id", "detalle", "precio","porcentaje","por_per"],
           "actions" => [
             '<button type="button" class="btn btn-info">Transferir</button>',
             '<button type="button" class="btn btn-warning">Editar</button>'
@@ -37,9 +37,9 @@ class ServiciosController extends Controller
     return view('generics.index', [
       "icon" => "fa-list-alt",
       "model" => "servicios",
-      "headers" => ["id", "Detalle", "Precio","Porcentaje", "Porcentaje Personal", "Porcentaje Tecnólogo", "Opciones"],
+      "headers" => ["id", "Detalle", "Precio","Porcentaje", "Porcentaje Personal", "Opciones"],
       "data" => $servicios,
-      "fields" => ["id", "detalle", "precio","porcentaje","por_per", "por_tec"],
+      "fields" => ["id", "detalle", "precio","porcentaje","por_per"],
         "actions" => [
           '<button type="button" class="btn btn-info">Transferir</button>',
           '<button type="button" class="btn btn-warning">Editar</button>'

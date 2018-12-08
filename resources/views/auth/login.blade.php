@@ -24,7 +24,7 @@
 			<div class="box">
 				<div class="box-content">
 					<div class="text-center">
-						   <img src="{{url('img/logo.jpeg')}}" style="width: 100%;">
+						   <img src="{{url('img/logo.jpg')}}" style="width: 100%;">
 					</div>
 					<form method="POST" action="login">
 						{{ csrf_field() }}
@@ -36,14 +36,7 @@
 						<label class="control-label">Contraseña</label>
 						<input type="password" class="form-control" name="password" />
 					</div>
-					<div class="form-group">
-						<label class="control-label">Sede</label>
-						<select class="form-control" name="sede">
-							@foreach($sedes as $sede)
-							<option value="{{$sede->id}}">{{$sede->name}}</option>
-							@endforeach
-						</select>
-					</div>
+			
 					<div class="text-center">
 						<input type="submit" value="Acceder" class="btn btn-primary">
 					</div>

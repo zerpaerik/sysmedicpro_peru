@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Models\Role;
 use App\Models\Config\Sede;
+use DB;
 
 class UserController extends Controller
 {
@@ -23,6 +24,16 @@ class UserController extends Controller
           'role_id' => 'required',
           'password' => 'required|string|min:6',
         ]);
+		
+		
+		
+		$searchSedeID = DB::table('sedes')
+                    ->select('*')
+                    ->where('id','=', $request->sede)
+                    ->first(); 
+
+		$nomsede= $searchSedeID->name;
+		
         if($validator->fails()) 
           return redirect()->action('Users\UserController@createView', ['errors' => $validator->errors()]);
 		$user = User::create([
@@ -31,6 +42,7 @@ class UserController extends Controller
       'email' => $request->email,
       'role_id' => $request->role_id,
 	  'sede' => $request->sede,
+	  'nomsede' => $nomsede,
       'password' => \Hash::make($request->password),
     ]);
 

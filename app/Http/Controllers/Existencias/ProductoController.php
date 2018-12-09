@@ -15,7 +15,7 @@ class ProductoController extends Controller
 
     public function index(){
 		//	$producto = Producto::all();
-      $producto =Producto::where("sede_id", '=', \Session::get("sede"))->where("almacen",'=', 1)->get();
+      $producto =Producto::where("sede_id", '=', \Auth::user()->sede)->where("almacen",'=', 1)->get();
 			return view('generics.index5', [
 				"icon" => "fa-list-alt",
 				"model" => "existencias",
@@ -32,7 +32,7 @@ class ProductoController extends Controller
 
       public function index2(){
     //  $producto = Producto::all();
-      $producto =Producto::where("sede_id", '=', \Session::get("sede"))->where("almacen",'=', 2)->get();
+      $producto =Producto::where("sede_id", '=', \Auth::user()->sede)->where("almacen",'=', 2)->get();
       return view('generics.index5', [
         "icon" => "fa-list-alt",
         "model" => "existencias",
@@ -72,15 +72,15 @@ class ProductoController extends Controller
 
     public function productOutView(){
       return view('existencias.salida', [
-        "productos" => Producto::where("sede_id", '=', \Session::get("sede"))->where("almacen",'=', 1)->get(['id', 'nombre']),
+        "productos" => Producto::where("sede_id", '=', \Auth::user()->sede)->where("almacen",'=', 1)->get(['id', 'nombre']),
         "sedes" => Sede::all(),
         "proveedores" => Proveedor::all()
       ]);    
     }
 
     public function productTransView(){
-      $sedes = Sede::whereNotIn("id", [\Session::get('sede')])->get(["id", "name"]);
-      return view('existencias.transferir', ["productos" => Producto::where("sede_id", '=', \Session::get("sede"))->where("almacen",'=', 1)->get(['id', 'nombre']), "sedes" => $sedes]);    
+      $sedes = Sede::whereNotIn("id", [\Auth::user()->sede])->get(["id", "name"]);
+      return view('existencias.transferir', ["productos" => Producto::where("sede_id", '=', \Auth::user()->sede)->where("almacen",'=', 1)->get(['id', 'nombre']), "sedes" => $sedes]);    
     }
 
     public function getProduct($id){
@@ -238,7 +238,7 @@ class ProductoController extends Controller
         "medida" => $request->medida,
         "preciounidad" => $request->preciounidad,
         "precioventa" => $request->precioventa,
-        "sede_id" => $request->session()->get('sede'),
+        "sede_id" => \Auth::user()->sede,
         "almacen" => 1
       ]);
        Toastr::success('Registrado Exitosamente.', 'Producto!', ['progressBar' => true]);

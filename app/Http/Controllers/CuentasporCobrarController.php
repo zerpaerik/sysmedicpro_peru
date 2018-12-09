@@ -120,9 +120,8 @@ class CuentasporCobrarController extends Controller
     ->where('b.nombres','like','%'.$nom.'%')
     ->where('b.apellidos','like','%'.$ape.'%')
     ->where('a.pendiente','>',0)
-	->where('a.id_sede','=',\Auth::user()->sede)
     ->whereNotIn('a.monto',[0,0.00])
-    ->where('a.id_sede','=', \Session::get("sede"))
+    ->where('a.id_sede','=', \Auth::user()->sede)
     ->orderby('a.id','desc')
     ->paginate(15); 
 

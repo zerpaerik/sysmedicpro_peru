@@ -18,7 +18,7 @@ class PacientesController extends Controller
 	
   public function index(){
 
-      $pacientes =Pacientes::where("estatus", '=', 1)->get();
+      $pacientes =Pacientes::where("estatus", '=', 1)->where("sede",'=',\Auth::user()->sede)->get();
       return view('generics.index', [
         "icon" => "fa-list-alt",
         "model" => "pacientes",
@@ -43,6 +43,7 @@ class PacientesController extends Controller
       $pacientes =Pacientes::where("estatus", '=', 1)
       ->where('nombres','like','%'.$split[0].'%')
       ->where('apellidos','like','%'.$split[1].'%')
+	  ->where('sede','=', \Auth::user()->sede)
       ->get();
       return view('generics.index', [
         "icon" => "fa-list-alt",
@@ -59,7 +60,7 @@ class PacientesController extends Controller
       }else{
 
       $pacientes =Pacientes::where("estatus", '=', 1)
-	  ->where("sede","=",\Auth::user()->sede)
+	  ->where('sede','=',\Auth::user()->sede)
       ->where('nombres','like','%'.$split[0].'%')
       ->where('apellidos','like','%'.$split[1].'%')
       ->get();
@@ -125,7 +126,8 @@ class PacientesController extends Controller
         'gradoinstruccion' => $request->gradoinstruccion,
         'ocupacion' => $request->ocupacion,
         'estatus' => 1,
-        'historia' => HistoriaPacientes::generarHistoria()
+        'historia' => HistoriaPacientes::generarHistoria(),
+		 'sede' => \Auth::user()->sede
     
       ]);
 

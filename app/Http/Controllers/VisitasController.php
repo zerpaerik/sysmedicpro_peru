@@ -21,7 +21,7 @@ class VisitasController extends Controller
         $inicio = Carbon::now()->toDateString();
         $final = Carbon::now()->addDay()->toDateString();
         $visitas = $this->elasticSearch($inicio,$final);
-        $profesionales = Profesional::where("estatus", '=', 1)->get();
+        $profesionales = Profesional::where("estatus", '=', 1)->where("sede",'=',\Auth::user()->sede)->get();
 
         return view('visitas.index', ["visitas" => $visitas,"profesionales" => $profesionales]);
 	}
@@ -36,8 +36,9 @@ class VisitasController extends Controller
   private function elasticSearch($initial, $final)
   { 
         $visitas = DB::table('visitas as a')
-        ->select('a.id','a.id_profesional','a.id_visitador','a.created_at','b.name','b.apellidos','c.name as nomvi','c.lastname as apevi','b.centro','b.especialidad','d.name as centro','e.nombre as especialidad')/*,'c.name as nomvi','c.lastname as apevi','a.created_at'*/
-        ->join('profesionales as b','b.id','a.id_profesional')
+        ->select('a.id','a.id_profesional','a.id_visitador','a.sede','a.created_at','b.name','b.apellidos','c.name as nomvi','c.lastname as apevi','b.centro','b.especialidad','d.name as centro','e.nombre as especialidad')/*,'c.name as nomvi','c.lastname as apevi','a.created_at'*/
+        ->where('a.sede','=',\Auth::user()->sede)
+		->join('profesionales as b','b.id','a.id_profesional')
         ->join('users as c','c.id','a.id_visitador')
         ->join('centros as d','b.centro','d.id')
         ->join('especialidades as e','e.id','b.especialidad')
@@ -53,7 +54,7 @@ class VisitasController extends Controller
 
   public function createView() {
 
-    $profesionales =Profesional::where("estatus", '=', 1)->get();
+    $profesionales =Profesional::where("estatus", '=', 1)->where("sede",'=',\Auth::user()->sede)->get();
     
     return view('visitas.create', compact('profesionales'));
   }
@@ -62,7 +63,8 @@ class VisitasController extends Controller
 
 		$visitas = Visitas::create([
 	      'id_profesional' => $request->profesional,
-	      'id_visitador' => Auth::id()
+	      'id_visitador' => Auth::id(),
+		  'sede' => \Auth::user()->sede
 	    
    		]);
 

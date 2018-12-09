@@ -17,7 +17,7 @@ class ProfesionalesController extends Controller
 
 	public function index(){
 
-
+          
       	$profesionales = DB::table('profesionales as a')
         ->select('a.id','a.name','a.apellidos','a.dni','a.cmp','a.estatus','a.sede','a.nacimiento','b.nombre as especialidad','c.name as centro')
         ->join('especialidades as b','a.especialidad','b.id')
@@ -52,6 +52,7 @@ class ProfesionalesController extends Controller
         ->select('a.id','a.name','a.apellidos','a.dni','a.cmp','a.estatus','a.nacimiento','b.nombre as especialidad','c.name as centro')
         ->join('especialidades as b','a.especialidad','b.id')
         ->join('centros as c','a.centro','c.id')
+		->where('a.sede','=',\Auth::user()->sede)
         ->where('a.estatus','=', 1)
         ->where('a.name','like', '%'.$split[0].'%')
         ->where('a.name','like', '%'.$split[1].'%')
@@ -94,41 +95,30 @@ class ProfesionalesController extends Controller
   }
 
 	public function create(Request $request){
-        $validator = \Validator::make($request->all(), [
-          'name' => 'required|string|max:255',
-          'apellidos' => 'required|string|max:255',
-          'cmp' => 'required|unique:profesionales' ,
-          'dni' => 'required|unique:profesionales' 
-
-        ]);
-        if($validator->fails()) 
-          return redirect()->action('Archivos\ProfesionalesController@createView', ['errors' => $validator->errors()]);
-	  
+      
 	  $sede = \Auth::user()->sede;
 		
-		$profesionales = Profesionales::create([
-	      'name' => $request->name,
-	      'apellidos' => $request->apellidos,
-	      'cmp' => $request->cmp,
-	      'dni' => $request->dni,
-	      'nacimiento' => $request->nacimiento,
-	      'especialidad' => $request->especialidad,
-	      'centro' => $request->centro,
-          'phone' => $request->phone,
-		  'sede' => $sede,
-
-   		]);
+		$profesionales = new Profesionales();
+        $profesionales->name = $request->name;
+        $profesionales->apellidos = $request->apellidos;
+        $profesionales->cmp= $request->cmp;
+        $profesionales->dni = $request->dni;
+        $profesionales->nacimiento = $request->nacimiento;
+        $profesionales->especialidad = $request->especialidad;
+		$profesionales->centro = $request->centro;
+		$profesionales->phone = $request->phone;
+		$profesionales->sede = $sede;
+        $profesionales->save();
 		
+		$users = new User();
+        $users->name = $request->name;
+        $users->lastname = $request->apellidos;
+        $users->tipo= 2;
+        $users->dni = $request->dni;
+		$users->sede = $sede;
+        $users->save();
 		
-      $users= User::create([
-        'name' => $request->name,
-        'lastname' => $request->apellidos,
-        'tipo' => $request->tipo,
-        'dni' => $request->dni,
-		'sede' => $sede,
-
-      ]);
-
+ 
      Toastr::success('Registrado Exitosamente.', 'Profesional de Apoyo!', ['progressBar' => true]);
 
 		return redirect()->action('Archivos\ProfesionalesController@index', ["created" => true, "profesionales" => Profesionales::all()]);

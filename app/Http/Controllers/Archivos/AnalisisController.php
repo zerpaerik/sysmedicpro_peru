@@ -18,10 +18,11 @@ class AnalisisController extends Controller
 
 
 	$analisis = DB::table('analises as a')
-        ->select('a.id','a.name','a.preciopublico','a.costlab','a.estatus','a.costlab','a.tiempo','a.material','b.name as laboratorio')
+        ->select('a.id','a.name','a.preciopublico','a.costlab','a.sede','a.estatus','a.costlab','a.tiempo','a.material','b.name as laboratorio')
         ->join('laboratorios as b','a.laboratorio','b.id')
         ->orderby('a.id','desc')
         ->where('a.estatus','=', 1)
+		->where('a.sede','=',\Auth::user()->sede)
         ->paginate(5000);     
         return view('generics.index', [
         "icon" => "fa-list-alt",

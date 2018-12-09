@@ -62,7 +62,7 @@
               <i class="fa fa-bars"></i>
             </a>
             &nbsp;
-            Sede: {{Session::get('sedeName')}}
+            Sede: {{Auth::user()->nomsede}}
           </div>
           <div class="col-xs-4 col-sm-8 top-panel-right">
             <ul class="nav navbar-nav pull-right panel-menu">

@@ -85,10 +85,10 @@ class AtencionesController extends Controller
     //$laboratorios = Analisis::all();
     //$pacientes = Pacientes::all();
     //$paquetes = Paquetes::all();
-    $servicios =Servicios::where("estatus", '=', 1)->get();
-    $laboratorios =Analisis::where("estatus", '=', 1)->get();
-    $pacientes =Pacientes::where("estatus", '=', 1)->get();
-    $paquetes =Paquetes::where("estatus", '=', 1)->get();
+    $servicios =Servicios::where("estatus", '=', 1)->where('sede','=', \Auth::user()->sede)->get();
+    $laboratorios =Analisis::where("estatus", '=', 1)->where('sede','=', \Auth::user()->sede)->get();
+    $pacientes =Pacientes::where("estatus", '=', 1)->where('sede','=', \Auth::user()->sede)->get();
+    $paquetes =Paquetes::where("estatus", '=', 1)->where('sede','=', \Auth::user()->sede)->get();
 
 
     
@@ -129,7 +129,7 @@ class AtencionesController extends Controller
               $paq->monto = $request->monto_p['paquetes'][$key]['monto'];
               $paq->abono = $request->monto_abop['paquetes'][$key]['abono'];
               $paq->porcentaje = ((float)$request->monto_p['paquetes'][$key]['monto']* $paquete->porcentaje)/100;
-              $paq->id_sede = $request->session()->get('sede');
+              $paq->id_sede = \Auth::user()->sede;
               $paq->estatus = 1;
               $paq->save(); 
 
@@ -137,7 +137,7 @@ class AtencionesController extends Controller
               $creditos->origen = 'ATENCIONES';
               $creditos->id_atencion = $paq->id;
               $creditos->monto= $request->monto_abop['paquetes'][$key]['abono'];
-              $creditos->id_sede = $request->session()->get('sede');
+              $creditos->id_sede = \Auth::user()->sede;
               $creditos->tipo_ingreso = $request->tipopago;
               $creditos->descripcion = 'INGRESO DE ATENCIONES';
               $creditos->save();
@@ -154,7 +154,7 @@ class AtencionesController extends Controller
               ->select('*')
               ->where('id','=', $request->id_servicio)
               ->first();   
-      $porcentaje = ($request->origen == 1) ? $searchServicio->por_per : $searchServicio->porcentaje;
+      $porcentaje = $searchServicio->porcentaje;
 
       foreach ($request->id_servicio['servicios'] as $key => $servicio) {
         if (!is_null($servicio['servicio'])) {
@@ -190,7 +190,7 @@ class AtencionesController extends Controller
               $serv->monto = $request->monto_s['servicios'][$key]['monto'];
               $serv->abono = $request->monto_abos['servicios'][$key]['abono'];
               $serv->porcentaje = ((float)$request->monto_s['servicios'][$key]['monto']* $porcentaje)/100;
-              $serv->id_sede = $request->session()->get('sede');
+              $serv->id_sede = \Auth::user()->sede;
               $serv->estatus = 1;
               $serv->save(); 
 
@@ -198,7 +198,7 @@ class AtencionesController extends Controller
               $creditos->origen = 'ATENCIONES';
               $creditos->id_atencion = $serv->id;
               $creditos->monto= $request->monto_abos['servicios'][$key]['abono'];
-              $creditos->id_sede = $request->session()->get('sede');
+              $creditos->id_sede = \Auth::user()->sede;
               $creditos->tipo_ingreso = $request->tipopago;
               $creditos->descripcion = 'INGRESO DE ATENCIONES';
               $creditos->save();
@@ -236,7 +236,7 @@ class AtencionesController extends Controller
           $lab->abono = $request->monto_abol['laboratorios'][$key]['abono'];
           $lab->porcentaje = ((float)$request->monto_l['laboratorios'][$key]['monto']* $porcentaje)/100;
           $lab->pendiente = $request->total_g;
-          $lab->id_sede = $request->session()->get('sede');
+          $lab->id_sede = \Auth::user()->sede;
           $lab->estatus = 1;
           $lab->save();
 
@@ -244,7 +244,7 @@ class AtencionesController extends Controller
           $creditos->origen = 'ATENCIONES';
           $creditos->id_atencion = $lab->id;
           $creditos->monto= $request->monto_abol['laboratorios'][$key]['abono'];
-          $creditos->id_sede = $request->session()->get('sede');
+          $creditos->id_sede = \Auth::user()->sede;
           $creditos->tipo_ingreso = $request->tipopago;
           $creditos->descripcion = 'INGRESO DE ATENCIONES';
           $creditos->save();
@@ -262,6 +262,7 @@ class AtencionesController extends Controller
        $personal = DB::table('users')
                     ->select('*')
                    // ->where('estatus','=','1')
+				    ->where('sede','=', \Auth::user()->sede)
                     ->where('tipo','=','1')
                     ->get();  
 
@@ -273,6 +274,7 @@ class AtencionesController extends Controller
         $profesional = DB::table('users')
                     ->select('*')
                    // ->where('estatus','=','1')
+				    ->where('sede','=', \Auth::user()->sede)
                     ->where('tipo','=','2')
                     ->get();  
 
@@ -285,10 +287,10 @@ class AtencionesController extends Controller
     //$laboratorios = Analisis::all();
     //$pacientes = Pacientes::all();
 
-    $servicios =Servicios::where("estatus", '=', 1)->get();
-    $laboratorios =Analisis::where("estatus", '=', 1)->get();
-    $pacientes =Pacientes::where("estatus", '=', 1)->get();
-    $paquetes =Paquetes::where("estatus", '=', 1)->get();
+    $servicios =Servicios::where("estatus", '=', 1)->where('sede','=', \Auth::user()->sede)->get();
+    $laboratorios =Analisis::where("estatus", '=', 1)->where('sede','=', \Auth::user()->sede)->get();
+    $pacientes =Pacientes::where("estatus", '=', 1)->where('sede','=', \Auth::user()->sede)->get();
+    $paquetes =Paquetes::where("estatus", '=', 1)->where('sede','=', \Auth::user()->sede)->get();
     //$personal = Personal::all();
     //$profesional = Profesionales::all();
     $users = User::all();
@@ -353,11 +355,13 @@ class AtencionesController extends Controller
     ->join('paquetes as f','f.id','a.id_paquete')
     ->whereNotIn('a.monto',[0,0.00])
     ->whereBetween('a.created_at', [date('Y-m-d 00:00:00', strtotime($initial)), date('Y-m-d 23:59:59', strtotime($initial))])
-    ->where('a.id_sede','=', \Session::get("sede"))
+    ->where('a.id_sede','=', \Auth::user()->sede)
     ->where('b.nombres','like','%'.$nombre.'%')
     ->where('b.apellidos','like','%'.$apellido.'%')
     ->orderby('a.id','desc')
     ->paginate(20);
+	
+	
 
     return $atenciones;
   }

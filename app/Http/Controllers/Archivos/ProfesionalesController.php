@@ -10,6 +10,7 @@ use App\Models\Centros;
 use App\User;
 use DB;
 use Toastr;
+use Auth;
 
 class ProfesionalesController extends Controller
 {
@@ -18,10 +19,11 @@ class ProfesionalesController extends Controller
 
 
       	$profesionales = DB::table('profesionales as a')
-        ->select('a.id','a.name','a.apellidos','a.dni','a.cmp','a.estatus','a.nacimiento','b.nombre as especialidad','c.name as centro')
+        ->select('a.id','a.name','a.apellidos','a.dni','a.cmp','a.estatus','a.sede','a.nacimiento','b.nombre as especialidad','c.name as centro')
         ->join('especialidades as b','a.especialidad','b.id')
         ->join('centros as c','a.centro','c.id')
         ->where('a.estatus','=', 1)
+		->where('a.sede','=',\Auth::user()->sede)
         ->orderby('a.dni','desc')
         ->paginate(5000);
         return view('archivos.profesionales.index', [
@@ -101,7 +103,10 @@ class ProfesionalesController extends Controller
         ]);
         if($validator->fails()) 
           return redirect()->action('Archivos\ProfesionalesController@createView', ['errors' => $validator->errors()]);
-		$centros = Profesionales::create([
+	  
+	  $sede = \Auth::user()->sede;
+		
+		$profesionales = Profesionales::create([
 	      'name' => $request->name,
 	      'apellidos' => $request->apellidos,
 	      'cmp' => $request->cmp,
@@ -109,21 +114,24 @@ class ProfesionalesController extends Controller
 	      'nacimiento' => $request->nacimiento,
 	      'especialidad' => $request->especialidad,
 	      'centro' => $request->centro,
-        'phone' => $request->phone,
+          'phone' => $request->phone,
+		  'sede' => $sede,
 
    		]);
-
+		
+		
       $users= User::create([
         'name' => $request->name,
         'lastname' => $request->apellidos,
         'tipo' => $request->tipo,
-        'dni' => $request->dni
+        'dni' => $request->dni,
+		'sede' => $sede,
 
       ]);
 
      Toastr::success('Registrado Exitosamente.', 'Profesional de Apoyo!', ['progressBar' => true]);
 
-		return redirect()->action('Archivos\ProfesionalesController@index', ["created" => true, "centros" => Profesionales::all()]);
+		return redirect()->action('Archivos\ProfesionalesController@index', ["created" => true, "profesionales" => Profesionales::all()]);
 	}    
 
   public function delete($id){

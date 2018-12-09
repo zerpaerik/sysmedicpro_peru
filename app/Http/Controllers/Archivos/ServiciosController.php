@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Servicios;
 use App\Models\ServicioMaterial;
 use App\Models\Existencias\Producto;
+use Auth;
 
 use Toastr;
 
@@ -15,7 +16,7 @@ class ServiciosController extends Controller
 
  public function index(){
 
-      $servicios =Servicios::where("estatus", '=', 1)->get();
+      $servicios =Servicios::where("estatus", '=', 1)->where("sede","=",\Auth::user()->sede)->get();
       return view('generics.index', [
         "icon" => "fa-list-alt",
         "model" => "servicios",
@@ -61,20 +62,8 @@ class ServiciosController extends Controller
           $servicio->detalle = $request->detalle;
           $servicio->precio  = $request->precio;
           $servicio->porcentaje  = $request->porcentaje;
-          $servicio->por_per  = $request->por_per;
-          $servicio->por_tec  = $request->por_tec;
-
-          if ($servicio->save()) {
-            if (isset($request->materiales)) {
-              foreach ($request->materiales as $mat) {
-                ServicioMaterial::create([
-                  'servicio_id' => $servicio->id,
-                  'material_id' => $mat['material'],
-                  'cantidad'    => $mat['cantidad']
-                ]);
-              }
-            }
-          }
+		  $servicio->sede = \Auth::user()->sede;
+		  $servicio->save();
           
           return redirect()->action('Archivos\ServiciosController@index', ["created" => true, "centros" => Servicios::all()]);
         }    

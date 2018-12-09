@@ -98,7 +98,7 @@ class CuentasporCobrarController extends Controller
                     $creditos->origen = 'CUENTAS POR COBRAR';
                     $creditos->id_atencion = $atencion;
                     $creditos->monto= $request->monto;
-                    $creditos->id_sede = $request->session()->get('sede');
+                    $creditos->id_sede = \Auth::user()->sede;
                     $creditos->tipo_ingreso = 'EF';
                     $creditos->descripcion = 'CUENTAS POR COBRAR';
                     $creditos->save();
@@ -111,7 +111,7 @@ class CuentasporCobrarController extends Controller
   private function elasticSearch($nom, $ape)
   {
      $cuentasporcobrar = DB::table('atenciones as a')
-    ->select('a.id','a.created_at','a.id_paciente','a.origen_usuario','a.origen','a.id_servicio','a.pendiente','a.id_laboratorio','a.monto','a.porcentaje','a.abono','a.pendiente','b.nombres','b.apellidos','c.detalle as servicio','e.name','e.lastname','d.name as laboratorio')
+    ->select('a.id','a.created_at','a.id_paciente','a.id_sede','a.origen_usuario','a.origen','a.id_servicio','a.pendiente','a.id_laboratorio','a.monto','a.porcentaje','a.abono','a.pendiente','b.nombres','b.apellidos','c.detalle as servicio','e.name','e.lastname','d.name as laboratorio')
     ->join('pacientes as b','b.id','a.id_paciente')
     ->join('servicios as c','c.id','a.id_servicio')
     ->join('analises as d','d.id','a.id_laboratorio')
@@ -120,6 +120,7 @@ class CuentasporCobrarController extends Controller
     ->where('b.nombres','like','%'.$nom.'%')
     ->where('b.apellidos','like','%'.$ape.'%')
     ->where('a.pendiente','>',0)
+	->where('a.id_sede','=',\Auth::user()->sede)
     ->whereNotIn('a.monto',[0,0.00])
     ->where('a.id_sede','=', \Session::get("sede"))
     ->orderby('a.id','desc')

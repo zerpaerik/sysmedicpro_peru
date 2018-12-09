@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use DB;
 use App\Historial;
 use App\Consulta;
+use Auth;
 class EventController extends Controller
 {
 
@@ -36,13 +37,14 @@ class EventController extends Controller
   public function show($id)
   {
     $event = DB::table('events as e')
-    ->select('e.id','e.paciente','e.title','e.profesional','e.date','e.time','p.dni','p.direccion','p.telefono','p.fechanac','p.gradoinstruccion','p.ocupacion','p.nombres','p.apellidos','p.id as pacienteId','pro.name as nombrePro','pro.apellidos as apellidoPro','pro.id as profesionalId','rg.start_time','rg.end_time','rg.id')
+    ->select('e.id','e.paciente','e.title','e.profesional','e.sede','e.date','e.time','p.dni','p.direccion','p.telefono','p.fechanac','p.gradoinstruccion','p.ocupacion','p.nombres','p.apellidos','p.id as pacienteId','pro.name as nombrePro','pro.apellidos as apellidoPro','pro.id as profesionalId','rg.start_time','rg.end_time','rg.id')
     ->join('pacientes as p','p.id','=','e.paciente')
     ->join('profesionales as pro','pro.id','=','e.profesional')
     ->join('rangoconsultas as rg','rg.id','=','e.time')
     ->where('e.id','=',$id)
+	->where('e.sede','=',\Auth::user()->sede)
     ->first();
-
+    
     $historial = Historial::where('paciente_id','=',$event->pacienteId)->first();
     $consultas = Consulta::where('paciente_id','=',$event->pacienteId)->get();
     $personal = Personal::where('estatus','=',1)->get();
@@ -119,7 +121,7 @@ class EventController extends Controller
         "time" => $request->time,
         "title" => $paciente->nombres . " " . $paciente->apellidos . " Paciente.",
         "monto" => $request->monto,
-        "sede" => $request->session()->get('sede')
+        "sede" => \Auth::user()->sede
       ]);
 
       $credito = Creditos::create([

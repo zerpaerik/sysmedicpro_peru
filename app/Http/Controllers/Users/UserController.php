@@ -30,6 +30,7 @@ class UserController extends Controller
       'lastname' => $request->lastname,
       'email' => $request->email,
       'role_id' => $request->role_id,
+	  'sede' => $request->sede,
       'password' => \Hash::make($request->password),
     ]);
 
@@ -48,7 +49,7 @@ class UserController extends Controller
   }
 
   public function createView() {
-    return view('archivos.users.create', ["roles" => Role::all()]);
+    return view('archivos.users.create', ["roles" => Role::all(),"sedes" => Sede::all()]);
   }
 
 }

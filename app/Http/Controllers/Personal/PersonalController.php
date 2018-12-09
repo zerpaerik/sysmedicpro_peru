@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Personal;
 use App\User;
 use Toastr;
+use Auth;
 
 
 class PersonalController extends Controller
@@ -20,7 +21,7 @@ class PersonalController extends Controller
   public function index(){
 
       //$personal = Personal::all();
-      $personal =Personal::where("estatus", '=', 1)->get();
+      $personal =Personal::where("estatus", '=', 1)->where("sede","=",\Auth::user()->sede)->get();
       return view('archivos.personal.index', [
         "icon" => "fa-list-alt",
         "model" => "personal",
@@ -95,14 +96,16 @@ class PersonalController extends Controller
 	      'email' => $request->email,
 	      'dni' => $request->dni,
 	      'address' => $request->address,
-        'cargo' => $request->cargo,
+          'cargo' => $request->cargo,
+		   'sede' => \Auth::user()->sede
    		]);
 
     $users= User::create([
         'name' => $request->name,
         'lastname' => $request->lastname,
         'tipo' => '1',
-        'dni' => $request->dni
+        'dni' => $request->dni,
+		 'sede' => \Auth::user()->sede
 
       ]);
 

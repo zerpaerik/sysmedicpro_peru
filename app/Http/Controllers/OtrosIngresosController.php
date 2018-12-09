@@ -56,7 +56,7 @@ class OtrosIngresosController extends Controller
 	      'monto' => $request->monto,
 	      'origen' => 'OTROS INGRESOS',
 	      'tipo_ingreso' => $request->tipo_ingreso,
-	      'id_sede' => $request->session()->get('sede')
+	      'id_sede' => \Auth::user()->sede
    		]);
 		return redirect()->action('OtrosIngresosController@index', ["created" => true, "ingresos" => Creditos::all()]);
 	}    
@@ -90,9 +90,10 @@ class OtrosIngresosController extends Controller
     private function elasticSearch($initial)
     {
       $ingresos = DB::table('creditos as a')
-            ->select('a.id','a.descripcion','a.monto','a.origen','a.created_at')
+            ->select('a.id','a.descripcion','a.monto','a.origen','a.created_at','a.id_sede')
             ->orderby('a.id','desc')
             ->where('a.origen','=','OTROS INGRESOS')
+			->where('a.id_sede','=',\Auth::user()->sede)
             ->whereBetween('a.created_at', [date('Y-m-d 00:00:00', strtotime($initial)), date('Y-m-d 23:59:59', strtotime($initial))])
             ->paginate(20);     
     

@@ -6,13 +6,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Laboratorios;
 use Toastr;
+use Auth;
 
 class LaboratoriosController extends Controller
 {
 
 	 public function index(){
 
-      $laboratorios =Laboratorios::where("estatus", '=', 1)->get();
+      $laboratorios =Laboratorios::where("estatus", '=', 1)->where("sede","=",\Auth::user()->sede)->get();
       return view('archivos.laboratorios.index', [
         "icon" => "fa-list-alt",
         "model" => "laboratorios",
@@ -55,6 +56,7 @@ class LaboratoriosController extends Controller
 	      'name' => $request->name,
 	      'direccion' => $request->direccion,
 	      'referencia' => $request->referencia,
+		   'sede' => \Auth::user()->sede
 	  
    		]);
 

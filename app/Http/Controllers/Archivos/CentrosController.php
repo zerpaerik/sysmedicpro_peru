@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Centros;
 use Toastr;
+use Auth;
 
 class CentrosController extends Controller
 {
@@ -17,7 +18,7 @@ class CentrosController extends Controller
 
    public function index(){
 
-      $centros =Centros::where("estatus", '=', 1)->get();
+      $centros =Centros::where("estatus", '=', 1)->where("sede","=",\Auth::user()->sede)->get();
       return view('archivos.centros.index', [
         "icon" => "fa-list-alt",
         "model" => "centros",
@@ -58,6 +59,7 @@ class CentrosController extends Controller
 	      'name' => $request->name,
 	      'direccion' => $request->direccion,
 	      'referencia' => $request->referencia,
+		   'sede' => \Auth::user()->sede
 	  
    		]);
 

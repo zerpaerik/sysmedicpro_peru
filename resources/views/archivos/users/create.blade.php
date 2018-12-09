@@ -8,7 +8,7 @@
 			<div class="box-header">
 				<div class="box-name">
 					<i class="fa fa-users"></i>
-					<span><strong>Agregar persona</strong></span>
+					<span><strong>Agregar Usuario</strong></span>
 				</div>
 				<div class="box-icons">
 					<a class="collapse-link">
@@ -44,6 +44,15 @@
 									<option value="{{$role->id}}">{{$role->name}}</option>
 								@endforeach
 							</select>
+						</div>	
+                        
+                       <label class="col-sm-1 control-label">Empresa</label>
+						<div class="col-sm-3">
+							<select   class="form-control" name="sede">
+								@foreach($sedes as $sed)
+									<option value="{{$sed->id}}">{{$sed->name}}</option>
+								@endforeach
+							</select>
 						</div>							
 
 						<label class="col-sm-1 control-label">Contraseña</label>
@@ -66,4 +75,6 @@
 		</div>
 	</div>
 </div>
+
+	
 @endsection

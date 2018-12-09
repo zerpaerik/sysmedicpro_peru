@@ -11,6 +11,7 @@ use App\Models\Distritos;
 use App\Models\GradoInstruccion;
 use App\Models\HistoriaPacientes;
 use Carbon\Carbon;
+use Auth;
 class PacientesController extends Controller
 {
 
@@ -58,6 +59,7 @@ class PacientesController extends Controller
       }else{
 
       $pacientes =Pacientes::where("estatus", '=', 1)
+	  ->where("sede","=",\Auth::user()->sede)
       ->where('nombres','like','%'.$split[0].'%')
       ->where('apellidos','like','%'.$split[1].'%')
       ->get();
@@ -99,7 +101,8 @@ class PacientesController extends Controller
 	      'gradoinstruccion' => $request->gradoinstruccion,
 	      'ocupacion' => $request->ocupacion,
 	      'estatus' => 1,
-	      'historia' => HistoriaPacientes::generarHistoria()
+	      'historia' => HistoriaPacientes::generarHistoria(),
+		   'sede' => \Auth::user()->sede
 	  
    		]);
 		return redirect()->action('Archivos\PacientesController@index', ["created" => true, "pacientes" => Pacientes::all()]);

@@ -8,6 +8,8 @@ use App\Models\Analisis;
 use App\Models\Laboratorios;
 use DB;
 use Toastr;
+use Auth;
+
 
 class AnalisisController extends Controller
 {
@@ -37,11 +39,12 @@ class AnalisisController extends Controller
   public function search(Request $request)
   {
     $analisis = DB::table('analises as a')
-          ->select('a.id','a.name','a.preciopublico','a.costlab','a.estatus','a.costlab','a.tiempo','a.material','b.name as laboratorio')
+          ->select('a.id','a.name','a.preciopublico','a.costlab','a.estatus','a.costlab','a.tiempo','a.material','a.sede','b.name as laboratorio')
           ->join('laboratorios as b','a.laboratorio','b.id')
           ->orderby('a.id','desc')
           ->where('a.estatus','=', 1)
           ->where('a.name','like', '%'.$request->nom.'%')
+		  ->where('a.sede','=', \Auth::user()->sede)
           ->paginate(5000);     
           return view('generics.index', [
           "icon" => "fa-list-alt",
@@ -64,6 +67,8 @@ class AnalisisController extends Controller
         ]);
         if($validator->fails()) 
           return redirect()->action('Archivos\AnalisisController@createView', ['errors' => $validator->errors()]);
+	  
+	
 		$analisis = Analisis::create([
 	      'name' => $request->name,
 	      'preciopublico' => $request->preciopublico,
@@ -71,7 +76,8 @@ class AnalisisController extends Controller
 	      'laboratorio' => $request->laboratorio,
         'porcentaje' => $request->porcentaje,
 	      'tiempo' => $request->tiempo,
-	      'material' => $request->material
+	      'material' => $request->material,
+		  'sede' => \Auth::user()->sede
 	    
 
    		]);

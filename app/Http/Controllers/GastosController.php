@@ -59,7 +59,7 @@ class GastosController extends Controller
 	      'descripcion' => $request->descripcion,
 	      'monto' => $request->monto,
 	      'origen' => 'RELACION DE GASTOS',
-	      'id_sede' => $request->session()->get('sede')
+	      'id_sede' => \Auth::user()->sede
    		]);
 		return redirect()->action('GastosController@index', ["created" => true, "gastos" => Debitos::all()]);
 	}    
@@ -93,7 +93,8 @@ class GastosController extends Controller
     private function elasticSearch($initial)
     {
       $gastos = DB::table('debitos as a')
-        ->select('a.id','a.descripcion','a.monto','a.created_at')
+        ->select('a.id','a.descripcion','a.monto','a.created_at','a.id_sede')
+		->where('a.id_sede','=',\Auth::user()->sede)
         ->whereBetween('a.created_at', [date('Y-m-d 00:00:00', strtotime($initial)), date('Y-m-d 23:59:59', strtotime($initial))])
         ->orderby('a.id','desc')
         ->paginate(20);  

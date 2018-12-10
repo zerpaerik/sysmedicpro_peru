@@ -43,7 +43,7 @@
 							@foreach($fields as $f)
 								<td>{{$d->$f}}</td>
 							@endforeach					
-							@if($model == 'servicios')
+							@if($model == 'pacientes')
 								<td>
 									<a id="{{$d->id}}" onclick="view(this)" class="btn btn-primary">Ver</a>
 								</td>
@@ -116,14 +116,13 @@
     </div>
 </div>
 
-@if ($model == 'servicios')
+@if ($model == 'pacientes')
 	<!-- MODAL SECTION -->
-    <div class="modal fade" id="viewServicio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="viewPaciente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-            <h4 class="modal-title" id="myModalLabel">Detalles del servicio</h4>
           </div>
           <div class="modal-body"></div>
         </div>
@@ -136,10 +135,10 @@
 		    
 		    $.ajax({
 		        type: "GET",
-		        url: "/servicio/view/"+id,
+		        url: "/pacientes/view/"+id,
 		        success: function (data) {
-		            $("#viewServicio .modal-body").html(data);
-		            $('#viewServicio').modal('show');
+		            $("#viewPaciente .modal-body").html(data);
+		            $('#viewPaciente').modal('show');
 		        },
 		        error: function (data) {
 		            console.log('Error:', data);
@@ -147,29 +146,7 @@
 		    });
 		}
 
-		function eliminar(e) {
-			var id = $(e).attr('id');
-			var r = confirm("Seguro que deseas eliminar este material!");
-			if (r) {
-				//$(e).parent('div').hide('slow');
-				$.ajax({
-		        type: "GET",
-			        url: "/servicio/material_eliminar/"+id,
-			        success: function (data) {
-			        	if (data == 1) {
-			        		$(e).parent('div').hide('slow');
-			            	toastr.success('El materia ha sido eliminado.', 'Servicios!');
-			        	} else {
-			        		toastr.error('El material no pudo ser eliminado.', 'Servicios!')
-			        	}
-			        },
-			        error: function (data) {
-			            toastr.error('Se genero un problema al momento de realizar el proceso de eliminación.', 'Servicios!')
-			        }
-			    });
-			}
-			
-		}
+
 	</script>
 	<style type="text/css">
 		.modal-backdrop.in {

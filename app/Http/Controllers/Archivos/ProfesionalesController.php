@@ -133,7 +133,7 @@ class ProfesionalesController extends Controller
 
   public function createView() {
 
-    $centros = Centros::all();
+	$centros =Centros::where("estatus", '=', 1)->where("sede","=",\Auth::user()->sede)->get();
     $especialidades = Especialidades::all();
 
     return view('archivos.profesionales.create', compact('centros','especialidades'));

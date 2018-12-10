@@ -59,9 +59,10 @@ class PaquetesController extends Controller
 
     public function createView()
     {
+		
       //$servicios = Servicios::all();
-      $servicios =Servicios::where("estatus", '=', 1)->get();
-      $laboratorios =Analisis::where("estatus", '=', 1)->get();
+      $servicios =Servicios::where("estatus", '=', 1)->where("sede","=",\Auth::user()->sede)->get();
+      $laboratorios =Analisis::where("estatus", '=', 1)->where("sede","=",\Auth::user()->sede)->get();
       //$laboratorios = Analisis::all();
        
       return view('archivos.paquetes.create', compact('servicios','laboratorios'));

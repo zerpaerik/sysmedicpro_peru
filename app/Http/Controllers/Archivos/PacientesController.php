@@ -107,7 +107,13 @@ class PacientesController extends Controller
 	  
    		]);
 		return redirect()->action('Archivos\PacientesController@index', ["created" => true, "pacientes" => Pacientes::all()]);
-	}   
+	}  
+
+     public function show($id)
+    {
+      $pacientes = Pacientes::where('id', $id)->first();
+      return view('archivos.pacientes.show', compact('pacientes'));
+    }	
 
     public function create2(Request $request){
         

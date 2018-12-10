@@ -445,10 +445,6 @@
          type: "GET",
          url:  "servicios/getServicio/"+$(this).val(),
          success: function(a) {
-            $.each(a.materiales, function(i, item) {
-                $("#load-materiales_"+id).append('\r\n'+item.material.nombre);
-            });
-            $("#materiales_"+id).show();
             $('#servicios_'+id+'_montoHidden').val(a.precio);
             $('#servicios_'+id+'_monto').val(a.precio);
             var total = parseFloat($('#total').val());

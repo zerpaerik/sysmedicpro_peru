@@ -21,10 +21,13 @@
 					</div>
 				</div>
                 <div class="row">
-					<div class="col-sm-8">
-						<strong>Direcciòn:</strong> {{$pacientes->direccion}}
-					</div>
 					<div class="col-sm-4">
+						<strong>Distrito:</strong> {{$pacientes->nombre}}
+					</div>
+					<div class="col-sm-6">
+						<strong>Dirección:</strong> {{$pacientes->direccion}}
+					</div>
+					<div class="col-sm-2">
 						<strong>Telèfono:</strong> {{$pacientes->telefono}}
 					</div>
 					

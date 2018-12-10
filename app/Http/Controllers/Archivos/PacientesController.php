@@ -12,6 +12,8 @@ use App\Models\GradoInstruccion;
 use App\Models\HistoriaPacientes;
 use Carbon\Carbon;
 use Auth;
+use DB;
+
 class PacientesController extends Controller
 {
 
@@ -111,7 +113,14 @@ class PacientesController extends Controller
 
      public function show($id)
     {
-      $pacientes = Pacientes::where('id', $id)->first();
+	  
+	   $pacientes = DB::table('pacientes as a')
+              
+			  ->select('a.id','a.nombres','a.apellidos','a.dni','a.historia','a.direccion','a.gradoinstruccion','a.telefono','a.fechanac','a.ocupacion','a.distrito','b.nombre')
+              ->join('distritos as b','b.id','a.distrito')
+			  ->where('a.id','=', $id)
+              ->first();
+	  
       return view('archivos.pacientes.show', compact('pacientes'));
     }	
 

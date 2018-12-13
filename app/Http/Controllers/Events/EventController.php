@@ -11,6 +11,7 @@ use App\Models\Events\{Event, RangoConsulta};
 use App\Models\Creditos;
 use App\Models\Events;
 use App\Models\Ciex;
+use App\Models\Historiales;
 use Calendar;
 use Carbon\Carbon;
 use DB;
@@ -34,27 +35,26 @@ class EventController extends Controller
     }
   }
 
-  public function show($id)
+   public function show(Request $request,$id)
   {
     $event = DB::table('events as e')
-    ->select('e.id','e.paciente','e.title','e.profesional','e.sede','e.date','e.time','p.dni','p.direccion','p.telefono','p.fechanac','p.gradoinstruccion','p.ocupacion','p.nombres','p.apellidos','p.id as pacienteId','pro.name as nombrePro','pro.apellidos as apellidoPro','pro.id as profesionalId','rg.start_time','rg.end_time','rg.id')
+    ->select('e.id','e.paciente','e.title','e.profesional','e.date','e.time','p.dni','p.direccion','p.telefono','p.fechanac','p.gradoinstruccion','p.ocupacion','p.nombres','p.apellidos','p.id as pacienteId','pro.name as nombrePro','pro.apellidos as apellidoPro','pro.id as profesionalId','rg.start_time','rg.end_time','rg.id')
     ->join('pacientes as p','p.id','=','e.paciente')
     ->join('profesionales as pro','pro.id','=','e.profesional')
     ->join('rangoconsultas as rg','rg.id','=','e.time')
     ->where('e.id','=',$id)
-	->where('e.sede','=',\Auth::user()->sede)
     ->first();
-    
+
     $historial = Historial::where('paciente_id','=',$event->pacienteId)->first();
     $consultas = Consulta::where('paciente_id','=',$event->pacienteId)->get();
     $personal = Personal::where('estatus','=',1)->get();
-   // $ciex = Ciex::all();
+    $ciex = Ciex::all();
     return view('events.show',[
       'data' => $event,
       'historial' => $historial,
       'consultas' => $consultas,
       'personal' => $personal,
-      //'ciex' => $ciex
+      'ciex' => $ciex
     ]);
   }
 
